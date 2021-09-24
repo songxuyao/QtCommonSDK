@@ -1,5 +1,4 @@
 #include "SLastError.h"
-#include "ntdll/ntdll.h"
 
 SLastError::SLastError()
 {

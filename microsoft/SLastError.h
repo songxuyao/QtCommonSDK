@@ -1,6 +1,7 @@
 #pragma once
 
 #include "global.h"
+#include "ntdll/ntdll.h"
 
 class SLastError
 {
