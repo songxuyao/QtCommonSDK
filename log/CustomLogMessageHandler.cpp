@@ -97,7 +97,10 @@ void CustomLogMessageHandler::run()
 			continue;
 		}
 
+		gLogMutex.lock();
 		auto pAction = gQueue.dequeue();
+		gLogMutex.unlock();
+
 		pAction->Execute();
 		delete pAction;
 	}
