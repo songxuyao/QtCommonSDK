@@ -72,9 +72,9 @@ void CustomLogMessageHandler::handle(QtMsgType type, const QMessageLogContext& c
 		break;
 	}
 
-	gLogMutex.lock();
+	//gLogMutex.lock();
 	gQueue.enqueue(new SLogAction(color, level, time, file_name, func, msg, ctx.line, tid));
-	gLogMutex.unlock();
+	//gLogMutex.unlock();
 }
 
 void CustomLogMessageHandler::Stop()
@@ -97,12 +97,16 @@ void CustomLogMessageHandler::run()
 			continue;
 		}
 
-		gLogMutex.lock();
-		auto pAction = gQueue.dequeue();
-		gLogMutex.unlock();
+		auto pAction = gQueue.first();
+		if (pAction)
+		{
+			pAction->Execute();
+			delete pAction;
+		}
 
-		pAction->Execute();
-		delete pAction;
+		gLogMutex.lock();
+		gQueue.removeFirst();
+		gLogMutex.unlock();
 	}
 
 	_ExitSemaphore.release();
