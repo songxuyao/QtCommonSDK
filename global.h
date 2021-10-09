@@ -17,6 +17,7 @@
 
 // Disable warning
 #pragma warning(disable : 4005)
+#pragma warning(disable : 4828)
 
 // Defines:
 #define MAX_FILE_PATH_SIZE    1024

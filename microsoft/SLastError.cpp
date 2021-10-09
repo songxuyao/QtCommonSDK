@@ -35,7 +35,7 @@ QString SLastError::ToQString()
 #ifdef UNICODE
 	ErrorDetail = QString::fromWCharArray(lpBuffer);
 #else
-	ErrorDetail = QString::fromLocal8Bit(lpMsgBuf);
+	ErrorDetail = QString::fromLocal8Bit(lpBuffer);
 #endif
 
 	return ErrorDetail;
