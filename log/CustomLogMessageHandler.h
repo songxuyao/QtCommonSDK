@@ -10,7 +10,8 @@
 class CustomLogMessageHandler : public QThread
 {
 public:
-	static CustomLogMessageHandler& Instance();
+	static CustomLogMessageHandler& Initialize();
+
 	static void handle(QtMsgType type, const QMessageLogContext& ctx, const QString& msg);
 	
 	void Stop();

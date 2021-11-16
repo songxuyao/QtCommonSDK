@@ -24,13 +24,15 @@ CustomLogMessageHandler::CustomLogMessageHandler()
 	HWND hWnd = GetConsoleWindow();
 	MoveWindow(hWnd, 0, 0, 1000, 1000, TRUE);
 #endif
+
+	qInstallMessageHandler(CustomLogMessageHandler::handle);
+	start();
 }
 
-CustomLogMessageHandler& CustomLogMessageHandler::Instance()
+CustomLogMessageHandler& CustomLogMessageHandler::Initialize()
 {
 	QMutexLocker lock(&gMutex);
 	static CustomLogMessageHandler instance;
-	instance.start();
 	return instance;
 }
 
@@ -72,9 +74,7 @@ void CustomLogMessageHandler::handle(QtMsgType type, const QMessageLogContext& c
 		break;
 	}
 
-	//gLogMutex.lock();
 	gQueue.enqueue(new SLogAction(color, level, time, file_name, func, msg, ctx.line, tid));
-	//gLogMutex.unlock();
 }
 
 void CustomLogMessageHandler::Stop()

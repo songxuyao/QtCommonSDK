@@ -9,11 +9,11 @@ QFile gLogFile;
 
 SLogAction::SLogAction(WORD color,
 	const QString& level,
-	const QString& time, 
-	const QString& fileName, 
+	const QString& time,
+	const QString& fileName,
 	const QString& function,
 	const QString& msg,
-	qint32 fileLine, 
+	qint32 fileLine,
 	qint32 threadID)
 	: _Level(level)
 	, _Color(color)
@@ -34,7 +34,8 @@ SLogAction::~SLogAction()
 
 void SLogAction::Execute()
 {
-	if (!gLogFile.isOpen()) {
+	if (!gLogFile.isOpen())
+	{
 		auto now = QDateTime::currentDateTime();
 		auto dir = QDir::current();
 		dir.mkdir("logs");
@@ -53,20 +54,28 @@ void SLogAction::Execute()
 	auto qThreadID = QString("%1").arg(_ThreadID, 5, 10, QLatin1Char('0'));
 	auto qFileInfo = QString("%1:%2").arg(_FileName).arg(_FileLine);
 
+	// 每条日志打印两行，第二行在第一行的消息内容位置开始
+	auto nLabelLength = _Level.length() + qThreadID.length() + _Time.length() + 3;
+	QString secondPrefix(nLabelLength, ' ');
+
 #if ENABLE_CONSOLE
 	SetConsoleColor(_Color);
-	std::cout << _Level.toLocal8Bit().data() << " "
+	std::cout << _Level.toLocal8Bit().constData() << " "
 		<< qThreadID.toLocal8Bit().constData() << " "
-		<< _Time.toLocal8Bit().data() << "> ";
+		<< _Time.toLocal8Bit().constData()
+		<< "> ";
 
 	SetConsoleColor(FOREGROUND_BLUE | FOREGROUND_GREEN | FOREGROUND_RED | FOREGROUND_INTENSITY);
-	std::cout << _Message.toLocal8Bit().data();
+	std::cout << _Message.toLocal8Bit().constData();
+	std::cout << std::endl;
+	std::cout << secondPrefix.toLocal8Bit().constData();
 
 	SetConsoleColor(FOREGROUND_BLUE);
-	std::cout << "\t" << "(" << qFileInfo.toLocal8Bit().constData();
+
+	std::cout << "(" << qFileInfo.toLocal8Bit().constData();
 	if (!_Function.isEmpty())
 	{
-		std::cout << ":" << _Function.toLocal8Bit().data();
+		std::cout << ":" << _Function.toLocal8Bit().constData();
 	}
 
 	std::cout << ")" << std::endl;
@@ -77,9 +86,10 @@ void SLogAction::Execute()
 	stm << _Level << " "
 		<< qThreadID << " "
 		<< _Time << "> "
-		<< _Message << "\t"
+		<< _Message << Qt::endl
+		<< secondPrefix.toLocal8Bit().constData()
 		<< "(" << qFileInfo;
-	if (!_Function.isEmpty()) 
+	if (!_Function.isEmpty())
 	{
 		stm << ":" << _Function;
 	}
